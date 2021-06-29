@@ -1,0 +1,4 @@
+<html>
+  <h1>Success!</h1>
+  <p>Check your {{ email }} inbox</p>
+</html>

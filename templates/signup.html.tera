@@ -1,0 +1,11 @@
+<html>
+  <h1>Signup</h1>
+  <form method="POST">
+    <label for="email">Email</label>
+    <input type="text" id="email" name="email"></input>
+    <label for="password">Create a Password</label>
+    <input type="text" id="password" name="password"></input>
+    <input type="submit" value="Sign Up" />
+  </form>
+  <a href="/login">Log in instead</a>
+</html>
