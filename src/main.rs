@@ -8,8 +8,17 @@ use rocket_contrib::templates::Template;
 use serde::{Serialize};
 
 #[get("/")]
-fn index() -> &'static str {
-    "Hello, world!"
+fn index() -> Redirect {
+    Redirect::to(uri!(login))
+}
+
+#[derive(Serialize)]
+struct EmptyContext {}
+
+#[get("/login")]
+/// renders login form
+fn login() -> Template {
+    Template::render("login", &EmptyContext {})
 }
 
 #[derive(FromForm, Serialize)]
@@ -17,9 +26,6 @@ struct Login {
     email: String,
     password: String,
 }
-
-#[derive(Serialize)]
-struct EmptyContext {}
 
 #[post("/login", data = "<login>")]
 /// login route: 
@@ -37,13 +43,6 @@ fn login_failed() -> Redirect {
     Redirect::to(uri!(login))
 }
 
-#[get("/login")]
-/// renders login form
-fn login() -> Template {
-    let context = EmptyContext {};
-    Template::render("login", &context)
-}
-
 #[get("/signup")]
 /// renders signup template
 fn signup() -> Template {
@@ -51,8 +50,37 @@ fn signup() -> Template {
     Template::render("signup", &context)
 }
 
+#[derive(FromForm, Serialize)]
+struct Signup {
+    email: String,
+    password: String,
+}
 
-// post /signup, create user, issue cookie on success, redirect
+#[post("/signup", data = "<signup>")]
+/// creates a new account with the credentials
+/// issues a cookie, redirects
+fn handle_signup(signup: Form<Signup>) -> Template {
+    Template::render("success", &*signup)
+}
+
+#[post("/signup", rank = 2)]
+fn signup_failed() -> Redirect {
+    Redirect::to(uri!(signup))
+}
+
+
+#[get("/authenticated")]
+fn authed(mut cookies: Cookies) -> Template {
+    let hits: u32 = cookies.get("hits").map_or(Ok(0), |c| c.value().parse::<u32>()).unwrap_or(0) + 1;
+    cookies.add(Cookie::new("hits", hits.to_string()));
+    println!("Cookies: ");
+    for c in cookies.iter() {
+        println!("Name: '{}', Value: '{}'", c.name(), c.value());
+    }
+    Template::render("success", &EmptyContext{})
+}
+
+
 // get or post to anything else
 //  -> fwd if authenticated
 //  -> fwd if unauthenticated for non-authenticated routes
@@ -68,8 +96,18 @@ fn signup() -> Template {
 // - CORS
 // - remember where to redirect 'back to' after redirect to signin
 
+
 fn main() {
     rocket::ignite()
         .attach(Template::fairing())
-        .mount("/", routes![index, login, handle_login, signup]).launch();
+        .mount("/", routes![
+            index, 
+            login, 
+            handle_login, 
+            login_failed,
+            signup,
+            handle_signup,
+            signup_failed,
+            authed,
+        ]).launch();
 }
