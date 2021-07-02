@@ -1,6 +1,6 @@
 [development]
 address = "localhost"
-port = 8000
+port = 3000
 # workers = [number of cpus * 2]
 keep_alive = 5
 read_timeout = 5

@@ -71,12 +71,15 @@ fn signup_failed() -> Redirect {
 
 #[get("/authenticated")]
 fn authed(mut cookies: Cookies) -> Template {
-    let hits: u32 = cookies.get("hits").map_or(Ok(0), |c| c.value().parse::<u32>()).unwrap_or(0) + 1;
-    cookies.add(Cookie::new("hits", hits.to_string()));
-    println!("Cookies: ");
-    for c in cookies.iter() {
-        println!("Name: '{}', Value: '{}'", c.name(), c.value());
-    }
+    let session_token = cookies.get("_twitter_iad_session");
+    dbg!(session_token);
+
+    //let hits: u32 = cookies.get("hits").map_or(Ok(0), |c| c.value().parse::<u32>()).unwrap_or(0) + 1;
+    //cookies.add(Cookie::new("hits", hits.to_string()));
+    // println!("Cookies: ");
+    // for c in cookies.iter() {
+     //   println!("Name: '{}', Value: '{}'", c.name(), c.value());
+    // }
     Template::render("success", &EmptyContext{})
 }
 
