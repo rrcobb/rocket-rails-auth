@@ -36,6 +36,7 @@ end
 
 def decrypt(encrypted_message)
   encrypted_data, iv, auth_tag = CGI.unescape(encrypted_message).split("--".freeze).map { |v| ::Base64.strict_decode64(v) }
+  # puts "encrypted_data, base64 decoded: #{encrypted_data}"
   raise StandardError.new("invalid message") if auth_tag.nil? || auth_tag.bytes.length != 16
 
   cipher_name, secret = config.values_at(:cipher_name, :secret) 
@@ -65,6 +66,7 @@ Steps to decrypting a cookie:
 - split on "--"
 - base64 decode parts
   - encrypted data, iv, and auth tag are the parts
+- check that these
 - setup openssl
   - decrypt mode
   - iv, auth_tag

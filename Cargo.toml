@@ -4,12 +4,27 @@ version = "0.1.0"
 authors = ["rob cobb <rwcobbjr@gmail.com>"]
 edition = "2018"
 description = "authentication and passthrough server"
+default-run = "cookie"
 
 [dependencies]
 rocket = "0.4.10"
 serde = { version = "1.0", features = ["derive"] }
+openssl = { version = "0.10" }
+percent-encoding = "2.1.0"
+base64 = "0.13.0"
 
 [dependencies.rocket_contrib]
 version = "0.4.10"
 default-features = false
 features = ["tera_templates"]
+
+[[bin]]
+name = "main"
+path = "src/main.rs"
+test = false
+bench = false
+
+[[bin]]
+name = "cookie"
+test = false
+bench = false
