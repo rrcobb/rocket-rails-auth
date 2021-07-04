@@ -61,6 +61,8 @@ end
 
 ## Implementing that same decryption in Rust
 
+`cookie.rs`
+
 Steps to decrypting a cookie:
 - cgi unescape (url decode)
 - split on "--"
@@ -78,4 +80,18 @@ Steps to decrypting a cookie:
 - parse that as json
 - user id is first element of JSON array at key "warden.user.user.key"
 
+## TODO
 
+- connect diesel to rails db
+    - write structs
+    - login handler
+    - issue own cookies 
+      - should they look just like the rails ones? 👀
+- extract config to a struct
+  - db config
+  - secret, salt, iterations, key len, algorithm, 
+- make cookie handling into a lib, with tests, instead of a main
+   - remove dbgs
+   - handle errors well, instead of poorly
+   - consider security implications (csrf, timing attacks, what else?); this whole thing might be misguided
+       :-)
